@@ -96,7 +96,6 @@ export default function TripForm({ initialValues, onSubmit, onCancel, mode }: Tr
   return (
     <form onSubmit={handleSubmit} noValidate style={{ fontFamily: bodyFont }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-
         {/* Title */}
         <div>
           <label style={labelStyle}>Trip Title *</label>
@@ -167,7 +166,7 @@ export default function TripForm({ initialValues, onSubmit, onCancel, mode }: Tr
             style={{ ...inputStyle, marginTop: '0.75rem' }}
             value={typeof coverPhotoUrl === 'string' && !coverPhotoUrl.startsWith('data:') ? coverPhotoUrl : ''}
             onChange={(e) => setCoverPhotoUrl(e.target.value)}
-            placeholder="…or paste an image URL"
+            placeholder="...or paste an image URL"
           />
         </div>
 
@@ -202,7 +201,7 @@ export default function TripForm({ initialValues, onSubmit, onCancel, mode }: Tr
               value={customTag}
               onChange={(e) => setCustomTag(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addCustomTag())}
-              placeholder="Add custom tag…"
+              placeholder="Add custom tag..."
             />
             <motion.button type="button" whileTap={{ scale: 0.95 }} onClick={addCustomTag}
               style={{ backgroundColor: `${theme.accentHex}22`, color: theme.accentHex, border: `1px solid ${theme.accentHex}44`, borderRadius: 10, padding: '0.65rem 1rem', fontSize: '0.85rem', cursor: 'pointer', fontFamily: bodyFont, whiteSpace: 'nowrap' }}>
@@ -225,7 +224,7 @@ export default function TripForm({ initialValues, onSubmit, onCancel, mode }: Tr
             {[{ label: 'Erik', value: erikAttended, set: setErikAttended }, { label: 'Marisa', value: marisaAttended, set: setMarisaAttended }].map(({ label, value, set }) => (
               <motion.button key={label} type="button" whileTap={{ scale: 0.95 }} onClick={() => set(!value)}
                 style={{ flex: 1, padding: '0.65rem', borderRadius: 10, border: `1px solid ${value ? theme.accentHex : `${theme.accentHex}30`}`, backgroundColor: value ? `${theme.accentHex}18` : 'transparent', color: value ? theme.accentHex : theme.textMutedHex, cursor: 'pointer', fontFamily: bodyFont, fontWeight: 600, fontSize: '0.9rem', transition: 'all 0.18s' }}>
-                {value ? '✓ ' : ''}{label}
+                {value ? '\u2713 ' : ''}{label}
               </motion.button>
             ))}
           </div>
@@ -235,7 +234,7 @@ export default function TripForm({ initialValues, onSubmit, onCancel, mode }: Tr
         <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '0.5rem' }}>
           <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             style={{ flex: 1, backgroundColor: theme.accentHex, color: theme.bgHex, border: 'none', borderRadius: 9999, padding: '0.8rem 1.5rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', fontFamily: bodyFont, letterSpacing: '0.04em', boxShadow: `0 4px 18px ${theme.accentHex}38` }}>
-            {mode === 'create' ? 'Save Trip ✈️' : 'Save Changes'}
+            {mode === 'create' ? 'Save Trip \u2708\ufe0f' : 'Save Changes'}
           </motion.button>
           <motion.button type="button" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} onClick={onCancel}
             style={{ backgroundColor: 'transparent', color: theme.textMutedHex, border: `1px solid ${theme.accentHex}30`, borderRadius: 9999, padding: '0.8rem 1.5rem', fontSize: '0.9rem', cursor: 'pointer', fontFamily: bodyFont }}>
