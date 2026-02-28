@@ -1,16 +1,15 @@
-import type { Trip } from '@/types'
+import { AnimatePresence } from 'framer-motion'
 import TripCard from './TripCard'
+import type { Trip } from '@/types'
 
-interface TripGridProps {
-  trips: Trip[]
-}
+interface TripGridProps { trips: Trip[] }
 
 export default function TripGrid({ trips }: TripGridProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      {trips.map((trip) => (
-        <TripCard key={trip.id} trip={trip} />
-      ))}
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}>
+      <AnimatePresence>
+        {trips.map((trip) => <TripCard key={trip.id} trip={trip} />)}
+      </AnimatePresence>
     </div>
   )
 }
