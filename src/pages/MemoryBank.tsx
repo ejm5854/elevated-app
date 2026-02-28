@@ -70,7 +70,7 @@ export default function MemoryBank() {
       exit="exit"
       style={{ backgroundColor: theme.bgHex, minHeight: '100dvh', paddingTop: 64, fontFamily: bodyFont }}
     >
-      {/* ── Page header banner ───────────────────────── */}
+      {/* Page header banner */}
       <div style={{
         backgroundColor: theme.surfaceHex,
         borderBottom: `1px solid ${theme.accentHex}18`,
@@ -136,12 +136,11 @@ export default function MemoryBank() {
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '2rem 1.5rem' }}>
 
-        {/* ── Filter row ───────────────────────────────── */}
+        {/* Filter row */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1.25rem', alignItems: 'center' }}>
-          {/* Search */}
           <input
             type="search"
-            placeholder="Search trips, destinations…"
+            placeholder="Search trips, destinations..."
             value={filter.search}
             onChange={(e) => setFilter((f) => ({ ...f, search: e.target.value }))}
             style={{ ...inputStyle, flex: 1, minWidth: 200 }}
@@ -149,7 +148,6 @@ export default function MemoryBank() {
             onBlur={(e) => (e.currentTarget.style.borderColor = `${theme.accentHex}30`)}
           />
 
-          {/* Sort */}
           <select
             value={`${filter.sortField}-${filter.sortOrder}`}
             onChange={(e) => {
@@ -161,13 +159,13 @@ export default function MemoryBank() {
             <option value="startDate-desc">Newest first</option>
             <option value="startDate-asc">Oldest first</option>
             <option value="rating-desc">Highest rated</option>
-            <option value="title-asc">A → Z</option>
+            <option value="title-asc">A to Z</option>
           </select>
 
           <ViewToggle value={viewMode} onChange={setViewMode} />
         </div>
 
-        {/* ── Tag filter strip ─────────────────────────── */}
+        {/* Tag filter strip */}
         {tagOptions.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.75rem', alignItems: 'center' }}>
             {tagOptions.map((tag) => (
@@ -200,7 +198,7 @@ export default function MemoryBank() {
           </div>
         )}
 
-        {/* ── Result count ─────────────────────────────── */}
+        {/* Result count */}
         <p style={{
           color: theme.textMutedHex,
           fontSize: '0.75rem',
@@ -211,7 +209,7 @@ export default function MemoryBank() {
           {filter.search || filter.tags.length > 0 ? ' matching your filters' : ''}
         </p>
 
-        {/* ── Trip grid / list ─────────────────────────── */}
+        {/* Trip grid / list */}
         <AnimatePresence mode="wait">
           {filtered.length === 0 ? (
             <motion.div
