@@ -6,8 +6,6 @@ import { useRecentTrips, useAllTrips } from '@/hooks/useTrips'
 import { computeStats } from '@/utils/stats'
 import TripCard from '@/components/TripCard'
 
-// ─── Animation Variants ──────────────────────────────────────────────────────
-
 const pageVariants = {
   initial: { opacity: 0 },
   animate: { opacity: 1, transition: { duration: 0.6, ease: 'easeOut' } },
@@ -45,8 +43,6 @@ const cardChild = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: 'easeOut' } },
 }
 
-// ─── Count-Up Hook ────────────────────────────────────────────────────────────
-
 function useCountUp(target: number, inView: boolean, duration = 1.4) {
   const [val, setVal] = useState(0)
   useEffect(() => {
@@ -60,8 +56,6 @@ function useCountUp(target: number, inView: boolean, duration = 1.4) {
   }, [inView, target, duration])
   return val
 }
-
-// ─── Stat Counter Pill ───────────────────────────────────────────────────────
 
 function StatPill({
   value, label, accent, muted, surface, border, delay,
@@ -89,7 +83,6 @@ function StatPill({
         overflow: 'hidden',
       }}
     >
-      {/* Accent glow */}
       <div style={{
         position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
         width: 60, height: 2, backgroundColor: accent, borderRadius: '0 0 4px 4px',
@@ -117,8 +110,6 @@ function StatPill({
     </motion.div>
   )
 }
-
-// ─── Feature Card ─────────────────────────────────────────────────────────────
 
 function FeatureCard({
   icon, title, description, accent, surface, border, text, muted, href, delay,
@@ -160,13 +151,11 @@ function FeatureCard({
         el.style.boxShadow = 'none'
       }}
     >
-      {/* Corner accent */}
       <div style={{
         position: 'absolute', top: 0, right: 0,
         width: 60, height: 60,
         background: `radial-gradient(circle at top right, ${accent}18, transparent 70%)`,
       }} />
-
       <div style={{ fontSize: '2.25rem', marginBottom: '1rem' }}>{icon}</div>
       <h3 style={{
         fontFamily: 'Cormorant Garamond, Playfair Display, serif',
@@ -193,13 +182,11 @@ function FeatureCard({
         letterSpacing: '0.08em',
         textTransform: 'uppercase',
       }}>
-        Explore →
+        Explore &rarr;
       </span>
     </motion.div>
   )
 }
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function Home() {
   const { theme, themeName } = useTheme()
@@ -232,19 +219,19 @@ export default function Home() {
 
   const features = [
     {
-      icon: '📸',
+      icon: '\ud83d\udcf8',
       title: 'Memory Bank',
       description: 'Every photo, every story. Beautifully organized by trip.',
       href: '/memories',
     },
     {
-      icon: '🗺️',
+      icon: '\ud83d\uddfa\ufe0f',
       title: 'World Map',
       description: 'See your journey painted across the globe in living colour.',
       href: '/map',
     },
     {
-      icon: '✨',
+      icon: '\u2728',
       title: 'Two Themes',
       description: "Your app, your aesthetic. Erik's navy gold or Marisa's blush rose.",
       href: '/',
@@ -259,11 +246,8 @@ export default function Home() {
       exit="exit"
       style={{ backgroundColor: theme.bgHex, fontFamily: bodyFont }}
     >
-
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      {/* HERO */}
       <section style={{ position: 'relative', height: '100dvh', minHeight: 600, overflow: 'hidden' }}>
-
-        {/* Background photo */}
         <motion.div
           initial={{ scale: 1.08 }}
           animate={{ scale: 1 }}
@@ -276,19 +260,14 @@ export default function Home() {
             style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
         </motion.div>
-
-        {/* Gradient overlays */}
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.35) 50%, rgba(0,0,0,0.15) 100%)',
         }} />
-        {/* Theme colour bleed at bottom */}
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, height: 120,
           background: `linear-gradient(to top, ${theme.bgHex}, transparent)`,
         }} />
-
-        {/* Hero content — centered */}
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', flexDirection: 'column',
@@ -296,12 +275,7 @@ export default function Home() {
           padding: '0 1.5rem',
           textAlign: 'center',
         }}>
-          <motion.div
-            variants={heroContainer}
-            initial="hidden"
-            animate="visible"
-          >
-            {/* Eyebrow */}
+          <motion.div variants={heroContainer} initial="hidden" animate="visible">
             <motion.p
               variants={heroChild}
               style={{
@@ -315,8 +289,6 @@ export default function Home() {
             >
               Erik &amp; Marisa
             </motion.p>
-
-            {/* Wordmark */}
             <motion.h1
               variants={heroChild}
               style={{
@@ -333,8 +305,6 @@ export default function Home() {
             >
               Elevated
             </motion.h1>
-
-            {/* Tagline */}
             <motion.p
               variants={heroChild}
               style={{
@@ -349,8 +319,6 @@ export default function Home() {
             >
               Every trip. Every memory. Together.
             </motion.p>
-
-            {/* CTAs */}
             <motion.div
               variants={heroChild}
               style={{ display: 'flex', gap: '0.875rem', justifyContent: 'center', flexWrap: 'wrap' }}
@@ -398,8 +366,6 @@ export default function Home() {
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -410,13 +376,8 @@ export default function Home() {
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem',
           }}
         >
-          <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
-            Scroll
-          </span>
-          <motion.div
-            animate={{ y: [0, 6, 0] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-          >
+          <span style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Scroll</span>
+          <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 3v10M3 9l5 5 5-5" stroke="rgba(255,255,255,0.45)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -424,7 +385,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ── STATS BAR ────────────────────────────────────────────────────── */}
+      {/* STATS BAR */}
       <motion.section
         ref={statsRef}
         variants={sectionVariants}
@@ -438,7 +399,6 @@ export default function Home() {
         }}
       >
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
-          {/* Section eyebrow */}
           <p style={{
             color: theme.accentHex, fontSize: '0.65rem', letterSpacing: '0.28em',
             textTransform: 'uppercase', textAlign: 'center', marginBottom: '2rem',
@@ -467,7 +427,7 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* ── RECENT TRIPS ─────────────────────────────────────────────────── */}
+      {/* RECENT TRIPS */}
       {recent.length > 0 && (
         <motion.section
           ref={recentRef}
@@ -477,8 +437,6 @@ export default function Home() {
           style={{ padding: '5rem 1.5rem' }}
         >
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-
-            {/* Section header */}
             <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
               <p style={{
                 color: theme.accentHex, fontSize: '0.65rem', letterSpacing: '0.28em',
@@ -497,21 +455,13 @@ export default function Home() {
               }}>
                 Our Journey
               </h2>
-              <p style={{ color: theme.textMutedHex, fontSize: '0.95rem', fontStyle: 'italic' }}>
-                The places that made us
-              </p>
+              <p style={{ color: theme.textMutedHex, fontSize: '0.95rem', fontStyle: 'italic' }}>The places that made us</p>
             </div>
-
-            {/* Horizontal scroll row */}
             <motion.div
               variants={cardStagger}
               initial="hidden"
               animate={recentInView ? 'visible' : 'hidden'}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                gap: '1.5rem',
-              }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.5rem' }}
             >
               {recent.map((trip) => (
                 <motion.div key={trip.id} variants={cardChild}>
@@ -519,23 +469,15 @@ export default function Home() {
                 </motion.div>
               ))}
             </motion.div>
-
-            {/* View all link */}
             <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
               <motion.div whileHover={{ x: 4 }} transition={{ duration: 0.2 }} style={{ display: 'inline-block' }}>
                 <Link
                   to="/memories"
                   style={{
-                    color: theme.accentHex,
-                    fontSize: '0.875rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.06em',
-                    textDecoration: 'none',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.375rem',
-                    borderBottom: `1px solid ${theme.accentHex}44`,
-                    paddingBottom: '0.125rem',
+                    color: theme.accentHex, fontSize: '0.875rem', fontWeight: 600,
+                    letterSpacing: '0.06em', textDecoration: 'none',
+                    display: 'inline-flex', alignItems: 'center', gap: '0.375rem',
+                    borderBottom: `1px solid ${theme.accentHex}44`, paddingBottom: '0.125rem',
                   }}
                 >
                   View All Memories
@@ -549,7 +491,7 @@ export default function Home() {
         </motion.section>
       )}
 
-      {/* ── FEATURE HIGHLIGHTS ───────────────────────────────────────────── */}
+      {/* FEATURE HIGHLIGHTS */}
       <motion.section
         ref={featureRef}
         variants={sectionVariants}
@@ -580,12 +522,7 @@ export default function Home() {
               Built for the two of you
             </h2>
           </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: '1.25rem',
-          }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.25rem' }}>
             {features.map((f, i) => (
               <FeatureCard
                 key={f.title}
@@ -605,32 +542,19 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer style={{
-        padding: '3rem 1.5rem',
-        textAlign: 'center',
-        borderTop: `1px solid ${theme.accentHex}18`,
-      }}>
-        {/* Decorative line */}
-        <div style={{
-          width: 48, height: 1, backgroundColor: theme.accentHex,
-          margin: '0 auto 1.5rem', opacity: 0.6,
-        }} />
+      {/* FOOTER */}
+      <footer style={{ padding: '3rem 1.5rem', textAlign: 'center', borderTop: `1px solid ${theme.accentHex}18` }}>
+        <div style={{ width: 48, height: 1, backgroundColor: theme.accentHex, margin: '0 auto 1.5rem', opacity: 0.6 }} />
         <p style={{
-          fontFamily: displayFont,
-          fontSize: '1.05rem',
-          fontStyle: 'italic',
-          color: theme.accentHex,
-          marginBottom: '0.5rem',
-          letterSpacing: '0.02em',
+          fontFamily: displayFont, fontSize: '1.05rem', fontStyle: 'italic',
+          color: theme.accentHex, marginBottom: '0.5rem', letterSpacing: '0.02em',
         }}>
           Made with love, for Erik &amp; Marisa
         </p>
         <p style={{ color: theme.textMutedHex, fontSize: '0.72rem', letterSpacing: '0.12em' }}>
-          © {new Date().getFullYear()} Elevated · Every trip. Every memory. Together.
+          &copy; {new Date().getFullYear()} Elevated &middot; Every trip. Every memory. Together.
         </p>
       </footer>
-
     </motion.main>
   )
 }
