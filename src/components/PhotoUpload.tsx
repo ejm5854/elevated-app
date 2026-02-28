@@ -1,95 +1,60 @@
 import { useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from '@/hooks/useTheme'
 
-interface PhotoUploadProps {
-  photos: string[]
-  onChange: (photos: string[]) => void
-  maxPhotos?: number
-}
+interface PhotoUploadProps { onUpload: (base64: string) => void; label?: string; accept?: string }
+const MAX_SIZE_MB = 4
 
-export default function PhotoUpload({ photos, onChange, maxPhotos = 10 }: PhotoUploadProps) {
-  const theme = useTheme()
+export default function PhotoUpload({ onUpload, label = 'Upload photo', accept = 'image/*' }: PhotoUploadProps) {
+  const { theme, themeName } = useTheme()
   const inputRef = useRef<HTMLInputElement>(null)
+  const [preview,  setPreview]  = useState<string | null>(null)
+  const [error,    setError]    = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
+  const isErik = themeName === 'erik'
+  const bodyFont = isErik ? "'DM Sans', system-ui, sans-serif" : "'Nunito', system-ui, sans-serif"
 
-  function handleFiles(files: FileList | null) {
-    if (!files) return
-    const remaining = maxPhotos - photos.length
-    const toProcess = Array.from(files).slice(0, remaining)
-
-    toProcess.forEach((file) => {
-      if (!file.type.startsWith('image/')) return
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const dataUrl = e.target?.result as string
-        onChange([...photos, dataUrl])
-      }
-      reader.readAsDataURL(file)
-    })
-  }
-
-  function removePhoto(index: number) {
-    onChange(photos.filter((_, i) => i !== index))
+  function processFile(file: File) {
+    setError(null)
+    if (!file.type.startsWith('image/')) { setError('Please select an image file.'); return }
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) { setError(`Image must be under ${MAX_SIZE_MB}MB.`); return }
+    const reader = new FileReader()
+    reader.onload = (e) => { const b64 = e.target?.result as string; setPreview(b64); onUpload(b64) }
+    reader.readAsDataURL(file)
   }
 
   return (
-    <div className="space-y-3">
-      {/* Drop zone */}
-      {photos.length < maxPhotos && (
-        <div
-          className="border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200"
-          style={{
-            borderColor: dragging ? theme.accentHex : `${theme.accentHex}40`,
-            backgroundColor: dragging ? `${theme.accentHex}10` : 'transparent',
-          }}
-          onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={(e) => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files) }}
-        >
-          <svg className="mx-auto mb-2" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke={theme.accentHex} strokeWidth="1.5">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="17 8 12 3 7 8" />
-            <line x1="12" y1="3" x2="12" y2="15" />
-          </svg>
-          <p className="text-sm" style={{ color: theme.textMutedHex }}>
-            Drop photos here or <span style={{ color: theme.accentHex }}>browse</span>
-          </p>
-          <p className="text-xs mt-1" style={{ color: theme.textMutedHex }}>
-            {photos.length}/{maxPhotos} photos
-          </p>
-          <input
-            ref={inputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="hidden"
-            onChange={(e) => handleFiles(e.target.files)}
-          />
-        </div>
-      )}
-
-      {/* Preview grid */}
-      {photos.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-          {photos.map((photo, i) => (
-            <div key={i} className="relative aspect-square rounded-lg overflow-hidden group">
-              <img src={photo} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
-              <button
-                type="button"
-                onClick={() => removePhoto(i)}
-                className="absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ backgroundColor: 'rgba(0,0,0,0.7)', color: 'white' }}
-              >
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+    <div style={{ fontFamily: bodyFont }}>
+      <input ref={inputRef} type="file" accept={accept} onChange={(e) => { const f = e.target.files?.[0]; if (f) processFile(f) }} style={{ display: 'none' }} />
+      <AnimatePresence mode="wait">
+        {preview ? (
+          <motion.div key="preview" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: 'relative', borderRadius: 14, overflow: 'hidden' }}>
+            <img src={preview} alt="Preview" style={{ width: '100%', height: 210, objectFit: 'cover', display: 'block' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 50%)' }} />
+            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => { setPreview(null); inputRef.current?.click() }}
+              style={{ position: 'absolute', bottom: 10, right: 10, backgroundColor: 'rgba(0,0,0,0.65)', color: '#fff', border: '1px solid rgba(255,255,255,0.22)', borderRadius: 8, padding: '5px 12px', fontSize: '0.75rem', cursor: 'pointer', fontFamily: bodyFont }}>Replace</motion.button>
+            <div style={{ position: 'absolute', top: 10, left: 10, backgroundColor: theme.accentHex, borderRadius: 6, padding: '3px 8px', fontSize: '0.7rem', fontWeight: 600, color: theme.bgHex }}>✓ Ready</div>
+          </motion.div>
+        ) : (
+          <motion.div key="dropzone" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => inputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files?.[0]; if (f) processFile(f) }}
+            style={{ border: `2px dashed ${dragging ? theme.accentHex : `${theme.accentHex}55`}`, borderRadius: 14, padding: '2.25rem 1.5rem', textAlign: 'center', cursor: 'pointer', backgroundColor: dragging ? `${theme.accentHex}12` : `${theme.accentHex}06`, transition: 'border-color 0.2s, background-color 0.2s' }}
+          >
+            <div style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{dragging ? '\ud83d\udcc2' : '\ud83d\udcf7'}</div>
+            <p style={{ color: theme.textHex, fontSize: '0.9rem', fontWeight: 500, marginBottom: '0.3rem' }}>{label}</p>
+            <p style={{ color: theme.textMutedHex, fontSize: '0.75rem' }}>{dragging ? 'Drop it here!' : `Click or drag & drop · Max ${MAX_SIZE_MB}MB`}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {error && (
+          <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: '0.4rem', fontFamily: bodyFont }}>{error}</motion.p>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
