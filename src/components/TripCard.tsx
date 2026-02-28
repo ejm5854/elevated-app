@@ -1,89 +1,169 @@
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useTheme } from '@/hooks/useTheme'
-import { formatTripDateRange, tripNights } from '@/utils/dates'
 import StarRating from './StarRating'
 import TagBadge from './TagBadge'
 import type { Trip } from '@/types'
+import { formatMonthYear, tripDays } from '@/utils/dates'
 
 interface TripCardProps {
   trip: Trip
+  onClick?: () => void
 }
 
-export default function TripCard({ trip }: TripCardProps) {
-  const theme = useTheme()
-  const nights = tripNights(trip.startDate, trip.endDate)
+export default function TripCard({ trip, onClick }: TripCardProps) {
+  const { theme, themeName } = useTheme()
+  const navigate = useNavigate()
+  const days = tripDays(trip.startDate, trip.endDate)
+
+  const isErik = themeName === 'erik'
+  const displayFont = isErik
+    ? "'Cormorant Garamond', Georgia, serif"
+    : "'Playfair Display', Georgia, serif"
+  const bodyFont = isErik
+    ? "'DM Sans', system-ui, sans-serif"
+    : "'Nunito', system-ui, sans-serif"
+
+  function handleClick() {
+    if (onClick) onClick()
+    else navigate(`/memories/${trip.id}`)
+  }
 
   return (
-    <motion.div
-      whileHover={{ y: -4, scale: 1.01 }}
-      transition={{ duration: 0.2 }}
-      className="rounded-2xl overflow-hidden flex flex-col"
-      style={{ backgroundColor: theme.cardBgHex, border: `1px solid ${theme.accentHex}20` }}
+    <motion.article
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
+      whileHover={{ y: -6, transition: { duration: 0.22, ease: 'easeOut' } }}
+      onClick={handleClick}
+      style={{
+        backgroundColor: theme.cardBgHex,
+        border: `1px solid ${theme.accentHex}1e`,
+        borderRadius: 20,
+        overflow: 'hidden',
+        cursor: 'pointer',
+        fontFamily: bodyFont,
+        boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+        transition: 'border-color 0.25s, box-shadow 0.25s',
+      }}
+      onMouseEnter={(e) => {
+        const el = e.currentTarget as HTMLElement
+        el.style.borderColor = `${theme.accentHex}55`
+        el.style.boxShadow = `0 16px 48px rgba(0,0,0,0.22), 0 0 0 1px ${theme.accentHex}18`
+      }}
+      onMouseLeave={(e) => {
+        const el = e.currentTarget as HTMLElement
+        el.style.borderColor = `${theme.accentHex}1e`
+        el.style.boxShadow = '0 2px 12px rgba(0,0,0,0.12)'
+      }}
     >
-      <Link to={`/memories/${trip.id}`} className="block">
-        {/* Cover image */}
-        <div className="relative aspect-[3/2] overflow-hidden">
-          <img
-            src={trip.coverPhotoUrl}
-            alt={trip.title}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-            loading="lazy"
-          />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          {/* Rating badge */}
-          <div className="absolute top-3 right-3">
-            <div
-              className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold backdrop-blur-sm"
-              style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: theme.accentHex }}
-            >
-              <span>{trip.rating}</span>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill={theme.accentHex} stroke="none">
-                <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-              </svg>
-            </div>
-          </div>
-          {/* Country flag emoji fallback */}
-          <div className="absolute bottom-3 left-3">
-            <span
-              className="text-xs font-medium px-2 py-0.5 rounded-full backdrop-blur-sm"
-              style={{ backgroundColor: 'rgba(0,0,0,0.5)', color: 'white' }}
-            >
-              {trip.destination.city}, {trip.destination.country}
-            </span>
-          </div>
+      {/* Cover photo */}
+      <div style={{ position: 'relative', paddingTop: '66.67%', overflow: 'hidden' }}>
+        <motion.img
+          src={trip.coverPhotoUrl}
+          alt={trip.title}
+          loading="lazy"
+          whileHover={{ scale: 1.06 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 50%, transparent 100%)',
+        }} />
+        <div style={{
+          position: 'absolute', top: 10, right: 10,
+          backgroundColor: 'rgba(0,0,0,0.52)',
+          borderRadius: 8,
+          padding: '4px 8px',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          border: '1px solid rgba(255,255,255,0.12)',
+        }}>
+          <StarRating value={trip.rating} readonly size="sm" />
         </div>
+        <div style={{
+          position: 'absolute', bottom: 10, left: 10,
+          backgroundColor: theme.accentHex,
+          borderRadius: 6,
+          padding: '3px 9px',
+          fontSize: '0.68rem',
+          fontWeight: 700,
+          color: theme.bgHex,
+          letterSpacing: '0.06em',
+          textTransform: 'uppercase',
+          fontFamily: bodyFont,
+        }}>
+          {days} {days === 1 ? 'day' : 'days'}
+        </div>
+        <div style={{
+          position: 'absolute', bottom: 10, right: 10,
+          backgroundColor: 'rgba(0,0,0,0.52)',
+          borderRadius: 6,
+          padding: '3px 8px',
+          fontSize: '0.68rem',
+          fontWeight: 500,
+          color: 'rgba(255,255,255,0.88)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          letterSpacing: '0.04em',
+        }}>
+          {trip.destination.country}
+        </div>
+      </div>
 
-        {/* Card body */}
-        <div className="p-4 flex flex-col gap-2">
-          <h3
-            className="font-serif font-semibold text-base leading-snug line-clamp-2"
-            style={{ color: theme.textHex }}
-          >
-            {trip.title}
-          </h3>
-
-          <div className="flex items-center justify-between">
-            <span className="text-xs" style={{ color: theme.textMutedHex }}>
-              {formatTripDateRange(trip.startDate, trip.endDate)}
+      {/* Card body */}
+      <div style={{ padding: '1.1rem 1.1rem 1rem' }}>
+        <p style={{
+          color: theme.textMutedHex,
+          fontSize: '0.68rem',
+          letterSpacing: '0.15em',
+          textTransform: 'uppercase',
+          marginBottom: '0.35rem',
+          fontWeight: 500,
+        }}>
+          {trip.destination.city} · {formatMonthYear(trip.startDate)}
+        </p>
+        <h3 style={{
+          fontFamily: displayFont,
+          fontSize: isErik ? '1.2rem' : '1.15rem',
+          fontWeight: isErik ? 600 : 700,
+          fontStyle: isErik ? 'italic' : 'normal',
+          color: theme.textHex,
+          marginBottom: '0.8rem',
+          lineHeight: 1.25,
+        }}>
+          {trip.title}
+        </h3>
+        <div style={{
+          height: 1,
+          backgroundColor: `${theme.accentHex}18`,
+          marginBottom: '0.75rem',
+        }} />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+          {trip.tags.slice(0, 3).map((tag) => (
+            <TagBadge key={tag} tag={tag} size="sm" />
+          ))}
+          {trip.tags.length > 3 && (
+            <span style={{
+              color: theme.textMutedHex,
+              fontSize: '0.68rem',
+              alignSelf: 'center',
+              fontStyle: 'italic',
+            }}>
+              +{trip.tags.length - 3} more
             </span>
-            <span className="text-xs" style={{ color: theme.textMutedHex }}>
-              {nights}n
-            </span>
-          </div>
-
-          <StarRating rating={trip.rating} size={13} />
-
-          {trip.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1">
-              {trip.tags.slice(0, 3).map((tag) => (
-                <TagBadge key={tag} tag={tag} size="sm" />
-              ))}
-            </div>
           )}
         </div>
-      </Link>
-    </motion.div>
+      </div>
+    </motion.article>
   )
 }
