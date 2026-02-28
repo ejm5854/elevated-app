@@ -1,19 +1,8 @@
-import { useAppStore, useThemeTokens } from '@/store/useAppStore'
-import type { ThemeTokens, ThemeName } from '@/types'
+import { useAppStore, THEMES } from '@/store/useAppStore'
+import type { ThemeTokens } from '@/types'
 
-export function useTheme(): {
-  theme: ThemeTokens
-  themeName: ThemeName | null
-  setTheme: (name: ThemeName | null) => void
-  lock: () => void
-} {
-  const tokens         = useThemeTokens()
-  const themeName      = useAppStore((s) => s.activeTheme)
-  const setActiveTheme = useAppStore((s) => s.setActiveTheme)
-  return {
-    theme:    tokens,
-    themeName,
-    setTheme: setActiveTheme,
-    lock:     () => setActiveTheme(null),
-  }
+/** Returns the full token set for the currently active theme. */
+export function useTheme(): ThemeTokens {
+  const activeTheme = useAppStore((s) => s.activeTheme)
+  return THEMES[activeTheme ?? 'erik']
 }
