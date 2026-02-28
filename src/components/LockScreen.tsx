@@ -5,6 +5,8 @@ import type { ThemeName } from '@/types'
 
 type Step = 'select' | 'pin'
 
+// --- Variants ----------------------------------------------------------------
+
 const backdropVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.6 } },
@@ -74,6 +76,7 @@ export default function LockScreen() {
         overflow: 'hidden',
       }}
     >
+      {/* Ambient bokeh blobs */}
       <div style={{
         position: 'absolute', top: '12%', left: '8%',
         width: 320, height: 320, borderRadius: '50%',
@@ -87,6 +90,7 @@ export default function LockScreen() {
         pointerEvents: 'none',
       }} />
 
+      {/* Logo / Title */}
       <motion.div
         variants={logoVariants}
         initial="hidden"
@@ -137,7 +141,10 @@ export default function LockScreen() {
         }} />
       </motion.div>
 
+      {/* Step panels */}
       <AnimatePresence mode="wait">
+
+        {/* SELECT USER */}
         {step === 'select' && (
           <motion.div
             key="select"
@@ -179,7 +186,7 @@ export default function LockScreen() {
                   }}
                 >
                   <div style={{ fontSize: '2.75rem', marginBottom: '0.75rem', lineHeight: 1 }}>
-                    {isErik ? '\u2708\uFE0F' : '\uD83C\uDF38'}
+                    {isErik ? '\u2708\ufe0f' : '\ud83c\udf38'}
                   </div>
                   <div style={{
                     fontFamily: isErik
@@ -205,6 +212,7 @@ export default function LockScreen() {
           </motion.div>
         )}
 
+        {/* ENTER PIN */}
         {step === 'pin' && selectedTheme && (
           <motion.div
             key="pin"
@@ -237,6 +245,7 @@ export default function LockScreen() {
               </p>
             </div>
 
+            {/* PIN dots */}
             <motion.div
               className="flex gap-4"
               animate={shake ? { x: [-10, 10, -8, 8, -4, 4, 0] } : {}}
@@ -259,6 +268,7 @@ export default function LockScreen() {
               ))}
             </motion.div>
 
+            {/* Hidden input for keyboard entry */}
             <input
               ref={inputRef}
               type="password"
@@ -271,12 +281,13 @@ export default function LockScreen() {
               aria-label="Enter PIN"
             />
 
+            {/* Numpad */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
               gap: '0.6rem',
             }}>
-              {['1','2','3','4','5','6','7','8','9','','0','\u232B'].map((key, idx) => {
+              {['1','2','3','4','5','6','7','8','9','','0','\u232b'].map((key, idx) => {
                 const isEmpty = key === ''
                 return (
                   <motion.button
@@ -284,7 +295,7 @@ export default function LockScreen() {
                     whileHover={!isEmpty ? { scale: 1.06 } : {}}
                     whileTap={!isEmpty ? { scale: 0.92 } : {}}
                     onClick={() => {
-                      if (key === '\u232B') handlePinChange(pin.slice(0, -1))
+                      if (key === '\u232b') handlePinChange(pin.slice(0, -1))
                       else if (key !== '') handlePinChange(pin + key)
                     }}
                     style={{
@@ -293,7 +304,7 @@ export default function LockScreen() {
                       border: isEmpty ? 'none' : `1px solid ${selectedTheme.accentHex}40`,
                       backgroundColor: isEmpty ? 'transparent' : `${selectedTheme.accentHex}14`,
                       color: '#f5f0e8',
-                      fontSize: key === '\u232B' ? '1.1rem' : '1.3rem',
+                      fontSize: key === '\u232b' ? '1.1rem' : '1.3rem',
                       fontWeight: 400,
                       cursor: isEmpty ? 'default' : 'pointer',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -307,6 +318,7 @@ export default function LockScreen() {
               })}
             </div>
 
+            {/* Back link */}
             <motion.button
               whileHover={{ opacity: 1 }}
               onClick={() => { setStep('select'); setPin('') }}
