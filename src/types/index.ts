@@ -106,7 +106,7 @@ export interface AppState {
   // --- Persisted UI preferences ---
   viewMode: ViewMode
 
-  // --- Session-only (NOT persisted) ---
+  // --- Session-only (NOT persisted — always starts at lock screen) ---
   activeTheme: ThemeName | null
 
   // --- Trip Actions ---
@@ -124,6 +124,6 @@ export interface AppState {
 }
 
 // ------------------------------------------------------------------
-// Form Data Types
+// Form Data Types (used by TripForm — strips server-generated fields)
 // ------------------------------------------------------------------
 export type TripFormData = Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>
