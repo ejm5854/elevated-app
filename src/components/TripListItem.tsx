@@ -1,56 +1,54 @@
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useTheme } from '@/hooks/useTheme'
-import { formatTripDateRange, tripNights } from '@/utils/dates'
 import StarRating from './StarRating'
 import TagBadge from './TagBadge'
 import type { Trip } from '@/types'
+import { formatDateRange, tripDays } from '@/utils/dates'
 
-interface TripListItemProps {
-  trip: Trip
-}
+interface TripListItemProps { trip: Trip }
 
 export default function TripListItem({ trip }: TripListItemProps) {
-  const theme = useTheme()
-  const nights = tripNights(trip.startDate, trip.endDate)
+  const { theme, themeName } = useTheme()
+  const navigate = useNavigate()
+  const days = tripDays(trip.startDate, trip.endDate)
+  const isErik = themeName === 'erik'
+  const displayFont = isErik ? "'Cormorant Garamond', Georgia, serif" : "'Playfair Display', Georgia, serif"
+  const bodyFont = isErik ? "'DM Sans', system-ui, sans-serif" : "'Nunito', system-ui, sans-serif"
 
   return (
-    <Link
-      to={`/memories/${trip.id}`}
-      className="flex items-center gap-4 p-3 rounded-xl transition-all duration-200 hover:scale-[1.005]"
-      style={{ backgroundColor: theme.cardBgHex, border: `1px solid ${theme.accentHex}20` }}
+    <motion.article
+      layout
+      initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 14 }}
+      transition={{ duration: 0.28, ease: 'easeOut' }}
+      whileHover={{ x: 3, transition: { duration: 0.18 } }}
+      onClick={() => navigate(`/memories/${trip.id}`)}
+      style={{ display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: theme.cardBgHex, border: `1px solid ${theme.accentHex}1e`, borderRadius: 14, padding: '0.875rem 1rem', cursor: 'pointer', fontFamily: bodyFont, boxShadow: '0 1px 6px rgba(0,0,0,0.08)', transition: 'border-color 0.2s, box-shadow 0.2s' }}
+      onMouseEnter={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${theme.accentHex}55`; el.style.boxShadow = `0 6px 24px rgba(0,0,0,0.14)` }}
+      onMouseLeave={(e) => { const el = e.currentTarget as HTMLElement; el.style.borderColor = `${theme.accentHex}1e`; el.style.boxShadow = '0 1px 6px rgba(0,0,0,0.08)' }}
     >
-      {/* Thumbnail */}
-      <div className="w-20 h-14 rounded-lg overflow-hidden flex-shrink-0">
-        <img
-          src={trip.coverPhotoUrl}
-          alt={trip.title}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
+      <div style={{ width: 84, height: 64, borderRadius: 10, overflow: 'hidden', flexShrink: 0 }}>
+        <img src={trip.coverPhotoUrl} alt={trip.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
       </div>
-
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <h3
-            className="font-serif font-semibold text-sm leading-snug truncate"
-            style={{ color: theme.textHex }}
-          >
-            {trip.title}
-          </h3>
-          <StarRating rating={trip.rating} size={12} />
-        </div>
-        <p className="text-xs mt-0.5" style={{ color: theme.textMutedHex }}>
-          {trip.destination.city}, {trip.destination.country} &middot; {formatTripDateRange(trip.startDate, trip.endDate)} &middot; {nights}n
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ color: theme.textMutedHex, fontSize: '0.65rem', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.2rem', fontWeight: 500 }}>
+          {trip.destination.city}, {trip.destination.country}
         </p>
-        {trip.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-1.5">
-            {trip.tags.slice(0, 4).map((tag) => (
-              <TagBadge key={tag} tag={tag} size="sm" />
-            ))}
-          </div>
-        )}
+        <h3 style={{ fontFamily: displayFont, fontSize: isErik ? '1.05rem' : '1rem', fontWeight: isErik ? 600 : 700, fontStyle: isErik ? 'italic' : 'normal', color: theme.textHex, marginBottom: '0.45rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.25 }}>
+          {trip.title}
+        </h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem' }}>
+          {trip.tags.slice(0, 3).map((tag) => <TagBadge key={tag} tag={tag} size="sm" />)}
+        </div>
       </div>
-    </Link>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.3rem', flexShrink: 0 }}>
+        <StarRating value={trip.rating} readonly size="sm" />
+        <p style={{ color: theme.textMutedHex, fontSize: '0.7rem', whiteSpace: 'nowrap' }}>{formatDateRange(trip.startDate, trip.endDate)}</p>
+        <p style={{ color: theme.accentHex, fontSize: '0.7rem', fontWeight: 600 }}>{days} {days === 1 ? 'day' : 'days'}</p>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, opacity: 0.35, marginLeft: '0.25rem' }}>
+        <path d="M5 3l4 4-4 4" stroke={theme.accentHex} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </motion.article>
   )
 }
